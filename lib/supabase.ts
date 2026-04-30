@@ -19,7 +19,7 @@ export async function getFeaturedNews(): Promise<News[]> {
     .limit(5)
 
   if (error) {
-    console.error('Error fetching featured news:', error)
+    console.error('Error fetching featured news:', error.message, error.code, error.details, error.hint)
     return []
   }
   return data ?? []
@@ -34,7 +34,7 @@ export async function getNewsByCategory(category: string, limit = 12): Promise<N
     .limit(limit)
 
   if (error) {
-    console.error('Error fetching news by category:', error)
+    console.error('Error fetching news by category:', error.message, error.code, error.details, error.hint)
     return []
   }
   return data ?? []
@@ -48,10 +48,22 @@ export async function getAllNews(limit = 30): Promise<News[]> {
     .limit(limit)
 
   if (error) {
-    console.error('Error fetching all news:', error)
+    console.error('Error fetching all news:', error.message, error.code, error.details, error.hint)
     return []
   }
   return data ?? []
+}
+
+export async function getAvailableCategories(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('news')
+    .select('category')
+
+  if (error) {
+    console.error('Error fetching categories:', error.message)
+    return []
+  }
+  return [...new Set(data?.map(d => d.category) ?? [])]
 }
 
 export async function getNewsById(id: string): Promise<News | null> {
@@ -76,7 +88,7 @@ export async function insertNews(
     .select('id')
 
   if (error) {
-    console.error('Error inserting news:', error)
+    console.error('Error inserting news:', error.message, error.code, error.details, error.hint)
     return 0
   }
   return data?.length ?? 0
@@ -90,7 +102,7 @@ export async function deleteExpiredNews(): Promise<number> {
     .select('id')
 
   if (error) {
-    console.error('Error deleting expired news:', error)
+    console.error('Error deleting expired news:', error.message, error.code, error.details, error.hint)
     return 0
   }
   return data?.length ?? 0

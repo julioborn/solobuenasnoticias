@@ -3,13 +3,16 @@
 import { useState, useEffect } from 'react'
 import type { News, NewsCategory } from '@/types'
 import { CATEGORIES } from '@/types'
+import { CATEGORY_ICONS } from '@/lib/categories'
 import NewsCard from './NewsCard'
 
 interface CategoryFilterProps {
   initialNews: News[]
+  availableCategories: string[]
 }
 
-export default function CategoryFilter({ initialNews }: CategoryFilterProps) {
+export default function CategoryFilter({ initialNews, availableCategories }: CategoryFilterProps) {
+  const available = new Set(availableCategories)
   const [activeCategory, setActiveCategory] = useState<NewsCategory | 'Todas'>('Todas')
   const [news, setNews] = useState<News[]>(initialNews)
   const [loading, setLoading] = useState(false)
@@ -36,50 +39,59 @@ export default function CategoryFilter({ initialNews }: CategoryFilterProps) {
     fetchByCategory()
   }, [activeCategory, initialNews])
 
-  const buttonBase =
-    'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap'
-  const activeStyle = 'bg-green-600 text-white shadow-sm'
-  const inactiveStyle = 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-700'
+  const AllIcon = CATEGORY_ICONS['Todas']
 
   return (
     <section className="space-y-6">
-      {/* Category Buttons */}
-      <div className="relative">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button
-            onClick={() => setActiveCategory('Todas')}
-            className={`${buttonBase} ${activeCategory === 'Todas' ? activeStyle : inactiveStyle}`}
-          >
-            🗞️ Todas
-          </button>
-          {CATEGORIES.map(cat => (
+      {/* category nav */}
+      <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide border-b border-stone-200">
+        <button
+          onClick={() => setActiveCategory('Todas')}
+          className={`cursor-pointer flex items-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-150 border-b-2 -mb-px ${
+            activeCategory === 'Todas'
+              ? 'border-red-600 text-red-600'
+              : 'border-transparent text-stone-400 hover:text-stone-700 hover:border-stone-400'
+          }`}
+        >
+          {AllIcon && <AllIcon size={12} />}
+          Todas
+        </button>
+        {CATEGORIES.map(cat => {
+          const Icon = CATEGORY_ICONS[cat.name]
+          const isActive = activeCategory === cat.name
+          const isAvailable = available.has(cat.name)
+          return (
             <button
               key={cat.name}
-              onClick={() => setActiveCategory(cat.name)}
-              className={`${buttonBase} ${activeCategory === cat.name ? activeStyle : inactiveStyle}`}
+              onClick={() => isAvailable && setActiveCategory(cat.name)}
+              disabled={!isAvailable}
+              className={`flex items-center gap-1.5 px-3 py-2.5 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-150 border-b-2 -mb-px ${
+                !isAvailable
+                  ? 'border-transparent text-stone-300 cursor-not-allowed'
+                  : isActive
+                    ? 'border-red-600 text-red-600 cursor-pointer'
+                    : 'border-transparent text-stone-400 hover:text-stone-700 hover:border-stone-400 cursor-pointer'
+              }`}
             >
-              {cat.emoji} {cat.name}
+              {Icon && <Icon size={12} />}
+              {cat.name}
             </button>
-          ))}
-        </div>
+          )
+        })}
       </div>
 
-      {/* News Grid */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-gray-100 h-64" />
+            <div key={i} className="animate-pulse bg-white border border-stone-200 h-64" />
           ))}
         </div>
       ) : news.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-4xl mb-3">🌱</p>
-          <p className="text-gray-500 font-medium">
-            Todavía no hay noticias en esta categoría.
+        <div className="text-center py-16 border border-stone-200 bg-white">
+          <p className="font-[family-name:var(--font-playfair)] text-lg text-stone-700 font-semibold">
+            Sin noticias en esta categoría
           </p>
-          <p className="text-gray-400 text-sm mt-1">
-            Volvé más tarde, ¡las buenas noticias están en camino!
-          </p>
+          <p className="text-stone-400 text-sm mt-1">Volvé más tarde, las buenas noticias están en camino.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

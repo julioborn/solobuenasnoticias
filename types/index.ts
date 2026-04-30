@@ -7,7 +7,6 @@ export type NewsCategory =
   | 'Deportes'
   | 'Tecnología'
   | 'Cultura'
-  | 'Comunidad'
   | 'Internacional'
 
 export interface News {
@@ -43,18 +42,17 @@ export interface ClaudeAnalysis {
   is_featured: boolean
 }
 
-export const CATEGORIES: { name: NewsCategory; emoji: string; color: string }[] = [
-  { name: 'Historia', emoji: '🏛️', color: 'bg-amber-100 text-amber-800 hover:bg-amber-200' },
-  { name: 'Ciencia', emoji: '🔬', color: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
-  { name: 'Naturaleza', emoji: '🌿', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-  { name: 'Salud', emoji: '💚', color: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' },
-  { name: 'Nutrición', emoji: '🥗', color: 'bg-lime-100 text-lime-800 hover:bg-lime-200' },
-  { name: 'Deportes', emoji: '⚽', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
-  { name: 'Tecnología', emoji: '💡', color: 'bg-violet-100 text-violet-800 hover:bg-violet-200' },
-  { name: 'Cultura', emoji: '🎭', color: 'bg-pink-100 text-pink-800 hover:bg-pink-200' },
-  { name: 'Comunidad', emoji: '🤝', color: 'bg-teal-100 text-teal-800 hover:bg-teal-200' },
-  { name: 'Internacional', emoji: '🌍', color: 'bg-sky-100 text-sky-800 hover:bg-sky-200' },
+export const CATEGORIES: { name: NewsCategory; emoji: string; color: string; textColor: string }[] = [
+  { name: 'Historia',      emoji: '', color: 'text-amber-700',   textColor: 'text-amber-700' },
+  { name: 'Ciencia',       emoji: '', color: 'text-blue-700',    textColor: 'text-blue-700' },
+  { name: 'Naturaleza',    emoji: '', color: 'text-emerald-700', textColor: 'text-emerald-700' },
+  { name: 'Salud',         emoji: '', color: 'text-green-700',   textColor: 'text-green-700' },
+  { name: 'Nutrición',     emoji: '', color: 'text-lime-700',    textColor: 'text-lime-700' },
+  { name: 'Deportes',      emoji: '', color: 'text-orange-700',  textColor: 'text-orange-700' },
+  { name: 'Tecnología',    emoji: '', color: 'text-violet-700',  textColor: 'text-violet-700' },
+  { name: 'Cultura',       emoji: '', color: 'text-pink-700',    textColor: 'text-pink-700' },
+  { name: 'Internacional', emoji: '', color: 'text-sky-700',     textColor: 'text-sky-700' },
 ]
 
-export const CATEGORY_MAP: Record<NewsCategory, { emoji: string; color: string }> =
-  Object.fromEntries(CATEGORIES.map(c => [c.name, { emoji: c.emoji, color: c.color }])) as Record<NewsCategory, { emoji: string; color: string }>
+export const CATEGORY_MAP: Record<NewsCategory, { emoji: string; color: string; textColor: string }> =
+  Object.fromEntries(CATEGORIES.map(c => [c.name, { emoji: c.emoji, color: c.color, textColor: c.textColor }])) as Record<NewsCategory, { emoji: string; color: string; textColor: string }>

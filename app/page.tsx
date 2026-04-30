@@ -1,26 +1,29 @@
-import { getAllNews, getFeaturedNews } from '@/lib/supabase'
+import { getAllNews, getFeaturedNews, getAvailableCategories } from '@/lib/supabase'
 import HeroSection from '@/components/HeroSection'
 import CategoryFilter from '@/components/CategoryFilter'
 
 export const revalidate = 300
 
 export default async function HomePage() {
-  const [featuredNews, allNews] = await Promise.all([
+  const [featuredNews, allNews, availableCategories] = await Promise.all([
     getFeaturedNews(),
     getAllNews(48),
+    getAvailableCategories(),
   ])
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
       <HeroSection featuredNews={featuredNews} />
 
-      <div className="flex items-center gap-4">
-        <div className="flex-1 h-px bg-gray-100" />
-        <span className="text-gray-400 text-sm font-medium px-2">Todas las noticias</span>
-        <div className="flex-1 h-px bg-gray-100" />
+      <div className="flex items-center gap-3">
+        <div className="w-2 h-5 bg-stone-950" />
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-stone-500">
+          Todas las noticias
+        </span>
+        <div className="flex-1 h-px bg-stone-200" />
       </div>
 
-      <CategoryFilter initialNews={allNews} />
+      <CategoryFilter initialNews={allNews} availableCategories={availableCategories} />
     </main>
   )
 }

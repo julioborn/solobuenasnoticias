@@ -29,7 +29,7 @@ CRITERIOS para noticia NEGATIVA (is_positive: false) — EXCLUIR:
 - Guerras o conflictos internacionales
 - Enfermedades en tono alarmista
 
-CATEGORÍAS disponibles: Historia, Ciencia, Naturaleza, Salud, Nutrición, Deportes, Tecnología, Cultura, Comunidad, Internacional
+CATEGORÍAS disponibles: Historia, Ciencia, Naturaleza, Salud, Nutrición, Deportes, Tecnología, Cultura, Internacional
 
 is_featured: true solo para noticias extraordinarias (máximo 1-2 por lote).
 
