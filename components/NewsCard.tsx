@@ -45,7 +45,7 @@ export default function NewsCard({ news, featured = false }: NewsCardProps) {
             src={imageUrl}
             alt={news.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            className="object-cover blur-[2px] group-hover:scale-105 transition-transform duration-700"
             sizes="(max-width: 640px) 100vw, 40vw"
             unoptimized
           />
@@ -105,7 +105,7 @@ export default function NewsCard({ news, featured = false }: NewsCardProps) {
           src={imageUrl}
           alt={news.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
+          className="object-cover blur-[2px] group-hover:scale-105 transition-transform duration-700"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           unoptimized
         />

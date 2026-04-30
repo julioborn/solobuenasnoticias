@@ -46,7 +46,7 @@ export default async function NoticiaPage({ params }: Props) {
               src={imageUrl}
               alt={news.title}
               fill
-              className="object-cover"
+              className="object-cover blur-[2px]"
               priority
               unoptimized
             />
