@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const category = searchParams.get('category')
+  const subcategory = searchParams.get('subcategory') ?? undefined
   const featured = searchParams.get('featured')
   const limit = parseInt(searchParams.get('limit') ?? '30', 10)
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (category) {
-      const news = await getNewsByCategory(category, limit)
+      const news = await getNewsByCategory(category, limit, subcategory)
       return NextResponse.json({ news })
     }
 

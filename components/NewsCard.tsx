@@ -63,7 +63,7 @@ export default function NewsCard({ news, featured = false }: NewsCardProps) {
                 </span>
               )}
             </div>
-            <h2 className="font-bold text-stone-900 text-xl leading-snug line-clamp-3 mb-2 group-hover:text-red-700 transition-colors duration-200">
+            <h2 className="font-bold text-stone-900 text-xl leading-snug line-clamp-none mb-2 group-hover:text-red-700 transition-colors duration-200">
               {news.title}
             </h2>
             {news.description && (
@@ -124,7 +124,7 @@ export default function NewsCard({ news, featured = false }: NewsCardProps) {
           )}
         </div>
 
-        <h3 className="font-bold text-stone-900 leading-snug line-clamp-3 mb-2 group-hover:text-red-700 transition-colors duration-200">
+        <h3 className="font-bold text-stone-900 leading-snug line-clamp-none mb-2 group-hover:text-red-700 transition-colors duration-200">
           {news.title}
         </h3>
         {news.description && (

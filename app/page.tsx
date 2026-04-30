@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getAllNews, getFeaturedNews, getAvailableCategories } from '@/lib/supabase'
 import HeroSection from '@/components/HeroSection'
 import CategoryFilter from '@/components/CategoryFilter'
@@ -23,7 +24,15 @@ export default async function HomePage() {
         <div className="flex-1 h-px bg-stone-200" />
       </div>
 
-      <CategoryFilter initialNews={allNews} availableCategories={availableCategories} />
+      <Suspense fallback={
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="animate-pulse bg-white border border-stone-200 h-72" />
+          ))}
+        </div>
+      }>
+        <CategoryFilter initialNews={allNews} availableCategories={availableCategories} />
+      </Suspense>
     </main>
   )
 }

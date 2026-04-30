@@ -1,9 +1,14 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { ClaudeAnalysis, NewsCategory, RawNewsItem } from '@/types'
+import type { ClaudeAnalysis, NewsCategory, RawNewsItem, SUBCATEGORIES } from '@/types'
+import { SUBCATEGORIES as SUBCATS } from '@/types'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
+
+const subcatLines = Object.entries(SUBCATS)
+  .map(([cat, subs]) => `- ${cat}: ${(subs as string[]).join(', ')}`)
+  .join('\n')
 
 const SYSTEM_PROMPT = `Eres el filtro de "Solo Buenas Noticias", un sitio web argentino de noticias positivas.
 Tu tarea es analizar titulares y descripciones de noticias y determinar si son positivas/inspiradoras.
@@ -12,10 +17,8 @@ CRITERIOS para noticia POSITIVA (is_positive: true):
 - Descubrimientos científicos o médicos
 - Logros deportivos y récords
 - Avances tecnológicos
-- Iniciativas comunitarias y solidaridad
-- Conservación de la naturaleza
+- Avances económicos, empresas exitosas, emprendimientos
 - Historia y patrimonio cultural
-- Gastronomía, nutrición y bienestar
 - Arte, música, literatura, cine
 - Historias de superación personal
 - Noticias internacionales inspiradoras
@@ -29,7 +32,10 @@ CRITERIOS para noticia NEGATIVA (is_positive: false) — EXCLUIR:
 - Guerras o conflictos internacionales
 - Enfermedades en tono alarmista
 
-CATEGORÍAS disponibles: Historia, Ciencia, Naturaleza, Salud, Nutrición, Deportes, Tecnología, Cultura, Internacional
+CATEGORÍAS disponibles: Historia, Ciencia, Salud, Deportes, Tecnología, Cultura, Internacional, Economía y Finanzas
+
+SUBCATEGORÍAS disponibles por categoría (asigna la más apropiada, o null si no encaja):
+${subcatLines}
 
 is_featured: true solo para noticias extraordinarias (máximo 1-2 por lote).
 
@@ -48,7 +54,7 @@ export async function analyzeNewsItems(
     .join('\n\n')
 
   const prompt = `Analiza estas ${items.length} noticias y devuelve un JSON array:
-[{"index": 0, "is_positive": true/false, "category": "...", "is_featured": true/false}, ...]
+[{"index": 0, "is_positive": true/false, "category": "...", "subcategory": "..." o null, "is_featured": true/false}, ...]
 
 Noticias:
 ${itemsText}`
@@ -63,7 +69,6 @@ ${itemsText}`
 
     const text = message.content[0].type === 'text' ? message.content[0].text : ''
 
-    // Extract JSON array from response
     const jsonMatch = text.match(/\[[\s\S]*\]/)
     if (!jsonMatch) return []
 
@@ -81,12 +86,11 @@ ${itemsText}`
   }
 }
 
-// Process in batches of 20 to avoid token limits
 export async function filterPositiveNews(
   items: RawNewsItem[]
-): Promise<Array<RawNewsItem & { category: NewsCategory; is_featured: boolean }>> {
+): Promise<Array<RawNewsItem & { category: NewsCategory; subcategory: string | null; is_featured: boolean }>> {
   const BATCH_SIZE = 20
-  const positiveItems: Array<RawNewsItem & { category: NewsCategory; is_featured: boolean }> = []
+  const positiveItems: Array<RawNewsItem & { category: NewsCategory; subcategory: string | null; is_featured: boolean }> = []
 
   for (let i = 0; i < items.length; i += BATCH_SIZE) {
     const batch = items.slice(i, i + BATCH_SIZE)
@@ -97,12 +101,12 @@ export async function filterPositiveNews(
         positiveItems.push({
           ...batch[analysis.index],
           category: analysis.category as NewsCategory,
+          subcategory: analysis.subcategory ?? null,
           is_featured: analysis.is_featured,
         })
       }
     }
 
-    // Small delay between batches to respect rate limits
     if (i + BATCH_SIZE < items.length) {
       await new Promise(resolve => setTimeout(resolve, 500))
     }

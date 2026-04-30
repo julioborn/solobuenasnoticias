@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       original_url: item.link,
       source: item.source,
       category: item.category,
+      subcategory: item.subcategory,
       is_featured: item.is_featured,
       published_at: item.pubDate ? new Date(item.pubDate).toISOString() : now.toISOString(),
       expires_at: expiry.toISOString(),
