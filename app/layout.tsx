@@ -48,7 +48,7 @@ export default function RootLayout({
         <footer className="mt-16 border-t-2 border-stone-950">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
             <span className="text-[11px] uppercase tracking-widest text-stone-400 font-medium">
-              Solo Buenas Noticias · Argentina
+              Solo Buenas Noticias
             </span>
             <span className="text-[11px] uppercase tracking-widest text-stone-400">
               Noticias filtradas por IA · Actualizado cada 2 horas
