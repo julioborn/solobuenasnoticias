@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchAllNews } from '@/lib/news-fetcher'
 import { filterPositiveNews } from '@/lib/claude'
 import { insertNews } from '@/lib/supabase'
+import { getUnsplashImage } from '@/lib/unsplash'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -34,18 +35,24 @@ export async function POST(request: NextRequest) {
     expiry.setDate(expiry.getDate() + 1)
     expiry.setHours(0, 0, 0, 0)
 
-    const toInsert = positiveItems.map(item => ({
-      title: item.title,
-      description: item.description || null,
-      content: null,
-      image_url: (item as { imageUrl?: string }).imageUrl || null,
-      original_url: item.link,
-      source: item.source,
-      category: item.category,
-      is_featured: item.is_featured,
-      published_at: item.pubDate ? new Date(item.pubDate).toISOString() : now.toISOString(),
-      expires_at: expiry.toISOString(),
-    }))
+    console.log('[fetch-news] Fetching Unsplash images...')
+    const toInsert = await Promise.all(
+      positiveItems.map(async item => {
+        const image_url = await getUnsplashImage(item.title, item.category)
+        return {
+          title: item.title,
+          description: item.description || null,
+          content: null,
+          image_url,
+          original_url: item.link,
+          source: item.source,
+          category: item.category,
+          is_featured: item.is_featured,
+          published_at: item.pubDate ? new Date(item.pubDate).toISOString() : now.toISOString(),
+          expires_at: expiry.toISOString(),
+        }
+      })
+    )
 
     const inserted = await insertNews(toInsert)
     console.log(`[fetch-news] Inserted ${inserted} new items`)
